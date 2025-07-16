@@ -18,8 +18,8 @@ Make sure you have the following installed:
 
 ### 1. Clone the repository and switch to main branch
 
-git clone https://github.com/mbatuhangunduz/rag-chatbot.git
-git switch main
+- git clone https://github.com/mbatuhangunduz/rag-chatbot.git
+- git switch main
 
 ### 2. Install Dependencies
 
