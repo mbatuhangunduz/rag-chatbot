@@ -1,5 +1,4 @@
-# Wireless Logic FastAPI Project
-
+# Incision Rag Powered ChatBot
 ## Project Structure
 
 
