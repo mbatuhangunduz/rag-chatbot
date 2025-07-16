@@ -1,51 +1,4 @@
 # Incision Rag Powered ChatBot
-## Project Structure
-
-
-medical-device-rag-chatbot/
-├── src/
-│   ├── index.ts                  # Application starting point
-│   ├── app.ts                    # MedicalDeviceRAGChatbot class 
-│   │
-│   ├── controllers/              # Controller layer
-│   │   ├── index.ts             # Controller exports
-│   │   ├── healthController.ts  # Healtch checking controller
-│   │   ├── initController.ts    # System initialization controller
-│   │   ├── queryController.ts   # Query processing controller
-│   │   └── documentController.ts # Document processing controller
-│   │
-│   ├── routes/                   # Route layer
-│   │   ├── index.ts             # Main routes class 
-│   │   ├── healthRoutes.ts      # Health checking routes
-│   │   ├── initRoutes.ts        # System initialization routes
-│   │   ├── queryRoutes.ts       # Query processing routes
-│   │   ├── documentRoutes.ts    # Document routes
-│   │   └── routeTypes.ts        # Route type defines
-│   │
-│   ├── services/                 # Service layer
-│   │   ├── ragService.ts        # RAG main class 
-│   │   ├── documentProcessor.ts # PDF işleme servisi 
-│   │   └── vectorService.ts     # Vektör işlemleri servisi 
-│   │
-│   ├── middleware/               # Middleware layer
-│   │   └── index.ts             # Middleware and error handler 
-│   │
-│   ├── config/                   # Configuration folder
-│   │   └── config.ts            # App configuration 
-│   │
-│   ├── types/                    #  - Type Definition
-│   │   └── index.ts             # All type definitions
-│   │
-│   └── documents/                #  - PDF file directory
-│       ├── Alcon_Centurion_Vision_System_Operator_s_Manual.pdf           
-│       ├── Karl_Storz_-_Endoscope.pdf
-│       └── Zeiss_OPMI_Pentero.pdf
-│
-├── package.json                  # Node.js dependencies
-├── tsconfig.json                # TypeScript configuration
-├── .env                         # Environment variables
-├── .gitignore                   # Git ignore file
-└── README.md                    # Proje documentation
 
 ## Medical Device RAG Chatbot
 A Node.js/TypeScript API that provides intelligent question-answering capabilities for medical device manuals using Retrieval-Augmented Generation (RAG) technology.
@@ -63,10 +16,10 @@ Make sure you have the following installed:
 
 ## Installation Steps
 
-### 1. Clone the repository
+### 1. Clone the repository and switch to main branch
 
 git clone <repository-url>
-cd medical-device-rag-chatbot
+git switch main
 
 ### 2. Install Dependencies
 
@@ -137,3 +90,52 @@ Search Parameters: Relevance thresholds, context limits
 
 - Requests can be regulated according to Pinecone and Openai rate limits.
 
+
+
+## Project Structure
+
+
+medical-device-rag-chatbot/
+├── src/
+│   ├── index.ts                  # Application starting point
+│   ├── app.ts                    # MedicalDeviceRAGChatbot class 
+│   │
+│   ├── controllers/              # Controller layer
+│   │   ├── index.ts             # Controller exports
+│   │   ├── healthController.ts  # Healtch checking controller
+│   │   ├── initController.ts    # System initialization controller
+│   │   ├── queryController.ts   # Query processing controller
+│   │   └── documentController.ts # Document processing controller
+│   │
+│   ├── routes/                   # Route layer
+│   │   ├── index.ts             # Main routes class 
+│   │   ├── healthRoutes.ts      # Health checking routes
+│   │   ├── initRoutes.ts        # System initialization routes
+│   │   ├── queryRoutes.ts       # Query processing routes
+│   │   ├── documentRoutes.ts    # Document routes
+│   │   └── routeTypes.ts        # Route type defines
+│   │
+│   ├── services/                 # Service layer
+│   │   ├── ragService.ts        # RAG main class 
+│   │   ├── documentProcessor.ts # PDF işleme servisi 
+│   │   └── vectorService.ts     # Vektör işlemleri servisi 
+│   │
+│   ├── middleware/               # Middleware layer
+│   │   └── index.ts             # Middleware and error handler 
+│   │
+│   ├── config/                   # Configuration folder
+│   │   └── config.ts            # App configuration 
+│   │
+│   ├── types/                    #  - Type Definition
+│   │   └── index.ts             # All type definitions
+│   │
+│   └── documents/                #  - PDF file directory
+│       ├── Alcon_Centurion_Vision_System_Operator_s_Manual.pdf           
+│       ├── Karl_Storz_-_Endoscope.pdf
+│       └── Zeiss_OPMI_Pentero.pdf
+│
+├── package.json                  # Node.js dependencies
+├── tsconfig.json                # TypeScript configuration
+├── .env                         # Environment variables
+├── .gitignore                   # Git ignore file
+└── README.md                    # Proje documentation
