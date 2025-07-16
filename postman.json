@@ -1,0 +1,226 @@
+{
+  "collection": {
+    "info": {
+      "_postman_id": "b3385360-d1dc-4def-bef5-c500979d7b6e",
+      "name": "Chat-Bot",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "updatedAt": "2025-07-15T18:32:29.000Z",
+      "createdAt": "2025-07-12T16:59:49.000Z",
+      "lastUpdatedBy": "13579060",
+      "uid": "13579060-b3385360-d1dc-4def-bef5-c500979d7b6e"
+    },
+    "item": [
+      {
+        "name": "health",
+        "id": "8f16d908-fcc4-4b47-a275-97a589132f9a",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/health",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["health"]
+          }
+        },
+        "response": [
+          {
+            "id": "56b3c27b-5980-4833-9b20-f5fa0fd17a9f",
+            "name": "health",
+            "originalRequest": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:3000/health",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "3000",
+                "path": ["health"]
+              }
+            },
+            "code": 200,
+            "_postman_previewlanguage": "json",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "type": "text"
+              }
+            ],
+            "cookie": [{ "expires": "Invalid Date" }],
+            "responseTime": null,
+            "body": "{\n    \"status\": \"healthy\",\n    \"initialized\": true,\n    \"timestamp\": \"2025-07-15T18:24:29.566Z\"\n}",
+            "uid": "13579060-56b3c27b-5980-4833-9b20-f5fa0fd17a9f"
+          }
+        ],
+        "uid": "13579060-8f16d908-fcc4-4b47-a275-97a589132f9a"
+      },
+      {
+        "name": "initialize",
+        "id": "c6574310-d468-46d9-bbc9-b9a7985054d1",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/initialize",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["initialize"]
+          }
+        },
+        "response": [
+          {
+            "id": "f1c2ddc2-a3ab-4bbf-9f5b-c9db4f1e8734",
+            "name": "initialize",
+            "originalRequest": {
+              "method": "POST",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:3000/initialize",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "3000",
+                "path": ["initialize"]
+              }
+            },
+            "status": "OK",
+            "code": 200,
+            "_postman_previewlanguage": "json",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "type": "text"
+              }
+            ],
+            "cookie": [{ "expires": "Invalid Date" }],
+            "responseTime": null,
+            "body": "{\n    \"message\": \"System initialized successfully\",\n    \"processedDocuments\": 3,\n    \"totalChunks\": 1258,\n    \"documents\": [\n        \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n        \"Karl_Storz_-_Endoscope.pdf\",\n        \"Zeiss_OPMI_Pentero.pdf\"\n    ]\n}",
+            "uid": "13579060-f1c2ddc2-a3ab-4bbf-9f5b-c9db4f1e8734"
+          }
+        ],
+        "uid": "13579060-c6574310-d468-46d9-bbc9-b9a7985054d1"
+      },
+      {
+        "name": "ask",
+        "id": "20b1c04e-27f8-4150-8285-877a68987997",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"question\": \"What safety precautions should be followed to prevent thermal eye tissue damage when using the Centurion Vision System?\",\n    \"maxResults\": 5,\n    \"includeSource\": true\n  }",
+            "options": { "raw": { "language": "json" } }
+          },
+          "url": {
+            "raw": "http://localhost:3000/ask",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["ask"]
+          }
+        },
+        "response": [
+          {
+            "id": "6c212fff-5e6e-44be-8891-43b55f2d3fef",
+            "name": "ask",
+            "originalRequest": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"question\": \"What safety precautions should be followed to prevent thermal eye tissue damage when using the Centurion Vision System?\",\n    \"maxResults\": 5,\n    \"includeSource\": true\n  }",
+                "options": { "raw": { "language": "json" } }
+              },
+              "url": {
+                "raw": "http://localhost:3000/initialize",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "3000",
+                "path": ["initialize"]
+              }
+            },
+            "status": "OK",
+            "code": 200,
+            "_postman_previewlanguage": "json",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "type": "text"
+              }
+            ],
+            "cookie": [{ "expires": "Invalid Date" }],
+            "responseTime": null,
+            "body": "{\n    \"answer\": \"To prevent thermal eye tissue damage when using the Centurion Vision System, healthcare professionals should adhere to the following safety precautions as outlined in the manual:\\n\\n1. Use low vacuum limits, low flow rates, and low bottle heights.\\n2. Avoid high power settings and extended power usage.\\n3. Refrain from using power during occlusion conditions (beeping tones).\\n4. Ensure sufficient aspiration of viscoelastic before using power.\\n5. Avoid making excessively tight incisions.\\n6. Do not combine the above actions that can lead to excessive heating and potential thermal injury to adjacent eye tissues.\\n\\nFollowing these safety precautions is crucial for successful procedures and to prevent thermal eye tissue damage when operating the Centurion Vision System.\",\n    \"sources\": [\n        {\n            \"document\": \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n            \"page\": 17,\n            \"relevanceScore\": 0.76,\n            \"excerpt\": \"12 tips can cause excessive heating and potential thermal injury to adjacent eye tissues. Appropriate use of Centurion  Vision System parameters and a...\"\n        },\n        {\n            \"document\": \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n            \"page\": 16,\n            \"relevanceScore\": 0.73,\n            \"excerpt\": \"cables connected to the Centurion  Vision System to avoid tripping. 1.12 8065751772 WARNINGS! Appropriate use of Centurion  Vision System parameters a...\"\n        },\n        {\n            \"document\": \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n            \"page\": 16,\n            \"relevanceScore\": 0.61,\n            \"excerpt\": \"system; call Alcon Technical Services. If the Centurion  Vision System is used at the 220 V - 240 V range in the United States or Canada, it should be...\"\n        },\n        {\n            \"document\": \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n            \"page\": 18,\n            \"relevanceScore\": 0.61,\n            \"excerpt\": \"may result in patient injury, including potential shock hazard to patient andor operator. The US tips supplied in the Centurion  Vision System pack ar...\"\n        }\n    ],\n    \"confidence\": 0.68,\n    \"timestamp\": \"2025-07-15T15:42:01.171Z\"\n}",
+            "uid": "13579060-6c212fff-5e6e-44be-8891-43b55f2d3fef"
+          }
+        ],
+        "uid": "13579060-20b1c04e-27f8-4150-8285-877a68987997"
+      },
+      {
+        "name": "documents",
+        "id": "dffb4e00-b170-43fb-9dbb-f9a783d1d0e4",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/documents",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["documents"]
+          }
+        },
+        "response": [
+          {
+            "id": "8a3c8831-4ba6-49d2-a1f7-3f928048ea93",
+            "name": "documents",
+            "originalRequest": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:3000/documents",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "3000",
+                "path": ["documents"]
+              }
+            },
+            "status": "OK",
+            "code": 200,
+            "_postman_previewlanguage": "json",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "type": "text"
+              }
+            ],
+            "cookie": [{ "expires": "Invalid Date" }],
+            "responseTime": null,
+            "body": "{\n    \"documents\": [\n        {\n            \"name\": \"Alcon_Centurion_Vision_System_Operator_s_Manual.pdf\",\n            \"chunkCount\": 516,\n            \"lastUpdated\": \"2024-01-15T10:00:00.000Z\"\n        },\n        {\n            \"name\": \"Karl_Storz_-_Endoscope.pdf\",\n            \"chunkCount\": 152,\n            \"lastUpdated\": \"2024-01-15T10:00:00.000Z\"\n        },\n        {\n            \"name\": \"Zeiss_OPMI_Pentero.pdf\",\n            \"chunkCount\": 590,\n            \"lastUpdated\": \"2024-01-15T10:00:00.000Z\"\n        }\n    ],\n    \"totalChunks\": 1258,\n    \"initialized\": true\n}",
+            "uid": "13579060-8a3c8831-4ba6-49d2-a1f7-3f928048ea93"
+          }
+        ],
+        "uid": "13579060-dffb4e00-b170-43fb-9dbb-f9a783d1d0e4"
+      }
+    ]
+  }
+}

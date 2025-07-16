@@ -4,40 +4,76 @@ import path from "path";
 import crypto from "crypto";
 import { DocumentChunk } from "../types";
 import { config } from "../config/config";
+import logger from "../utils/logger";
 
 export class DocumentProcessor {
+  private static instance: DocumentProcessor;
   private documentChunks: Map<string, DocumentChunk> = new Map();
 
-  constructor() {}
+  private constructor() {
+    logger.info("DocumentProcessor instance created");
+  }
+
+  public static getInstance(): DocumentProcessor {
+    if (!DocumentProcessor.instance) {
+      DocumentProcessor.instance = new DocumentProcessor();
+    }
+    return DocumentProcessor.instance;
+  }
 
   public getDocumentChunks(): Map<string, DocumentChunk> {
+    logger.debug(`Retrieved ${this.documentChunks.size} document chunks`);
     return this.documentChunks;
   }
 
   public async processPDFsFromDirectory(
     directoryPath: string
   ): Promise<string[]> {
-    if (!fs.existsSync(directoryPath)) {
-      fs.mkdirSync(directoryPath, { recursive: true });
+    try {
+      logger.info(`Starting PDF processing from directory: ${directoryPath}`);
+      
+      if (!fs.existsSync(directoryPath)) {
+        logger.info(`Directory doesn't exist, creating: ${directoryPath}`);
+        fs.mkdirSync(directoryPath, { recursive: true });
+      }
+
+      const pdfFiles = fs
+        .readdirSync(directoryPath)
+        .filter((file) => file.toLowerCase().endsWith(".pdf"));
+
+      logger.info(`Found ${pdfFiles.length} PDF files in directory`);
+
+      if (pdfFiles.length === 0) {
+        const error = "No PDF files found in directory";
+        logger.error(error);
+        throw new Error(error);
+      }
+
+      const processedFiles: string[] = [];
+      let totalChunks = 0;
+
+      for (const filename of pdfFiles) {
+        const filePath = path.join(directoryPath, filename);
+        logger.info(`Processing PDF file: ${filename}`);
+        
+        try {
+          const chunks = await this.processPDF(filePath, filename);
+          processedFiles.push(filename);
+          totalChunks += chunks.length;
+          
+          logger.info(`Successfully processed ${filename}: ${chunks.length} chunks created`);
+        } catch (error) {
+          logger.error(`Failed to process ${filename}: ${error}`);
+          throw error;
+        }
+      }
+
+      logger.info(`PDF processing completed: ${processedFiles.length} files processed, ${totalChunks} total chunks created`);
+      return processedFiles;
+    } catch (error) {
+      logger.error(`Error in processPDFsFromDirectory: ${error}`);
+      throw error;
     }
-
-    const pdfFiles = fs
-      .readdirSync(directoryPath)
-      .filter((file) => file.toLowerCase().endsWith(".pdf"));
-
-    if (pdfFiles.length === 0) {
-      throw new Error("No PDF files found in directory");
-    }
-
-    const processedFiles: string[] = [];
-    for (const filename of pdfFiles) {
-      const filePath = path.join(directoryPath, filename);
-      await this.processPDF(filePath, filename);
-      processedFiles.push(filename);
-    }
-    console.log("processedFiles", processedFiles);
-
-    return processedFiles;
   }
 
   public async processPDF(
@@ -45,21 +81,34 @@ export class DocumentProcessor {
     filename: string
   ): Promise<DocumentChunk[]> {
     try {
-      console.log("processing PDF");
+      logger.debug(`Starting PDF processing for: ${filename}`);
+      
+      if (!fs.existsSync(filePath)) {
+        const error = `PDF file not found: ${filePath}`;
+        logger.error(error);
+        throw new Error(error);
+      }
+
+      const fileStats = fs.statSync(filePath);
+      logger.debug(`PDF file size: ${(fileStats.size / 1024 / 1024).toFixed(2)} MB`);
+
       const dataBuffer = fs.readFileSync(filePath);
+      logger.debug(`PDF file read successfully, buffer size: ${dataBuffer.length} bytes`);
+
       const pdfData = await pdf(dataBuffer);
-      console.log("burada");
+      logger.debug(`PDF parsed successfully, text length: ${pdfData.text.length} characters, pages: ${pdfData.numpages}`);
 
       // Clean and split text into chunks
       const cleanText = this.cleanText(pdfData.text);
-      console.log("şimdi geldij");
+      logger.debug(`Text cleaned, length after cleaning: ${cleanText.length} characters`);
+      
       const chunks = this.splitIntoChunks(
         cleanText,
         config.documents.chunkSize,
         config.documents.chunkOverlap
       );
 
-      console.log(`Processing ${filename}: ${chunks.length} chunks`);
+      logger.info(`Text split into ${chunks.length} chunks for ${filename}`);
 
       const documentChunks: DocumentChunk[] = [];
 
@@ -81,18 +130,32 @@ export class DocumentProcessor {
         documentChunks.push(documentChunk);
       });
 
+      logger.info(`Created ${documentChunks.length} document chunks for ${filename}`);
+      logger.debug(`Total chunks in memory: ${this.documentChunks.size}`);
+
       return documentChunks;
     } catch (error) {
-      console.error(`Error processing ${filename}:`, error);
+      logger.error(`Error processing PDF ${filename}: ${error}`);
       throw error;
     }
   }
 
   private cleanText(text: string): string {
-    return text
-      .replace(/\s+/g, " ")
-      .replace(/[^\w\s\-.,;:!?()]/g, "")
-      .trim();
+    try {
+      logger.debug(`Starting text cleaning, original length: ${text.length} characters`);
+      
+      const cleaned = text
+        .replace(/\s+/g, " ")
+        .replace(/[^\w\s\-.,;:!?()]/g, "")
+        .trim();
+      
+      logger.debug(`Text cleaning completed, cleaned length: ${cleaned.length} characters`);
+      
+      return cleaned;
+    } catch (error) {
+      logger.error(`Error in text cleaning: ${error}`);
+      throw error;
+    }
   }
 
   private splitIntoChunks(
@@ -100,59 +163,110 @@ export class DocumentProcessor {
     chunkSize: number,
     overlap: number
   ): string[] {
-    const chunks: string[] = [];
-    let start = 0;
-    console.log("yettim");
-
-    while (start < text.length) {
-      const end = Math.min(start + chunkSize, text.length);
-      let chunk = text.substring(start, end);
-
-      // Try to break at sentence boundaries
-      if (end < text.length) {
-        const lastSentence = chunk.lastIndexOf(".");
-        if (lastSentence > chunk.length * 0.7) {
-          chunk = chunk.substring(0, lastSentence + 1);
+    try {
+      logger.debug(`Starting text chunking with chunkSize: ${chunkSize}, overlap: ${overlap}`);
+      
+      const chunks: string[] = [];
+      
+      if (text.length <= chunkSize) {
+        const result = text.trim().length > 50 ? [text.trim()] : [];
+        logger.debug(`Text shorter than chunk size, returning ${result.length} chunks`);
+        return result;
+      }
+      
+      let start = 0;
+      let chunkCount = 0;
+      
+      while (start < text.length) {
+        let end = Math.min(start + chunkSize, text.length);
+        
+        if (end < text.length) {
+          const chunk = text.substring(start, end);
+          
+          // Try to end at sentence boundary
+          const lastDot = chunk.lastIndexOf('.');
+          if (lastDot > chunk.length * 0.6) {
+            end = start + lastDot + 1;
+          } else {
+            // Try to end at word boundary
+            const lastSpace = chunk.lastIndexOf(' ');
+            if (lastSpace > chunk.length * 0.8) {
+              end = start + lastSpace;
+            }
+          }
         }
+        
+        const chunk = text.substring(start, end).trim();
+        
+        if (chunk.length > 50) {
+          chunks.push(chunk);
+          chunkCount++;
+        } else {
+          logger.debug(`Chunk ${chunkCount}: Skipped short chunk of length ${chunk.length}`);
+        }
+        
+        if (end >= text.length) {
+          break; 
+        }
+        
+        let nextStart = end - overlap;
+        
+        if (nextStart > start) {
+          while (nextStart > start && text[nextStart] !== ' ' && text[nextStart] !== '.') {
+            nextStart--;
+          }
+          
+          if (text[nextStart] === ' ') {
+            nextStart++;
+          }
+        }
+        
+        start = Math.max(start + 1, nextStart);
       }
-
-      chunks.push(chunk.trim());
-      const nextStart = end - overlap;
-      if (nextStart <= start) {
-        console.warn("Breaking to prevent infinite loop:", {
-          start,
-          nextStart,
-        });
-        break;
-      }
-
-      start = nextStart;
+      
+      const filteredChunks = chunks.filter(
+        (chunk) => chunk.length > config.documents.minChunkLength
+      );
+      
+      logger.info(`Text chunking completed: ${chunks.length} initial chunks, ${filteredChunks.length} chunks after filtering (min length: ${config.documents.minChunkLength})`);
+      
+      return filteredChunks;
+    } catch (error) {
+      logger.error(`Error in text chunking: ${error}`);
+      throw error;
     }
-
-    return chunks.filter(
-      (chunk) => chunk.length > config.documents.minChunkLength
-    );
   }
 
   public getDocumentStats(): { [key: string]: any } {
-    const documents = Array.from(this.documentChunks.values()).reduce(
-      (acc, chunk) => {
-        if (!acc[chunk.metadata.source]) {
-          acc[chunk.metadata.source] = {
-            name: chunk.metadata.source,
-            chunkCount: 0,
-            lastUpdated: chunk.metadata.timestamp,
-          };
-        }
-        acc[chunk.metadata.source].chunkCount++;
-        return acc;
-      },
-      {} as any
-    );
+    try {
+      logger.debug("Generating document statistics");
+      
+      const documents = Array.from(this.documentChunks.values()).reduce(
+        (acc, chunk) => {
+          if (!acc[chunk.metadata.source]) {
+            acc[chunk.metadata.source] = {
+              name: chunk.metadata.source,
+              chunkCount: 0,
+              lastUpdated: chunk.metadata.timestamp,
+            };
+          }
+          acc[chunk.metadata.source].chunkCount++;
+          return acc;
+        },
+        {} as any
+      );
 
-    return {
-      documents: Object.values(documents),
-      totalChunks: this.documentChunks.size,
-    };
+      const stats = {
+        documents: Object.values(documents),
+        totalChunks: this.documentChunks.size,
+      };
+
+      logger.info(`Document stats generated: ${Object.keys(documents).length} documents, ${stats.totalChunks} total chunks`);
+      
+      return stats;
+    } catch (error) {
+      logger.error(`Error generating document stats: ${error}`);
+      throw error;
+    }
   }
 }

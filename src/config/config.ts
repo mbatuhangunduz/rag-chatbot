@@ -13,7 +13,6 @@ export const config = {
   
   pinecone: {
     apiKey: process.env.PINECONE_API_KEY!,
-    environment: process.env.PINECONE_ENVIRONMENT!,
     indexName: process.env.PINECONE_INDEX_NAME!,
   },
 
@@ -28,7 +27,7 @@ export const config = {
     path: path.join(__dirname, '../documents'),
     chunkSize: 1000,
     chunkOverlap: 200,
-    batchSize: 10,
+    batchSize: 100,
     minChunkLength: 50,
   },
 
@@ -40,10 +39,18 @@ export const config = {
 
   // Search settings
   search: {
-    minRelevanceScore: 0.65,
+    minRelevanceScore: 0.5,
     maxContextLength: 2000,
     temperature: 0.3,
     maxTokens: 500,
+  },
+  logging: {
+    level: process.env.LOG_LEVEL || 'info',
+    enableRequestLogging: process.env.ENABLE_REQUEST_LOGGING !== 'false',
+    enablePerformanceLogging: process.env.ENABLE_PERFORMANCE_LOGGING !== 'false',
+    logToFile: process.env.LOG_TO_FILE !== 'false',
+    maxLogFileSize: parseInt(process.env.MAX_LOG_FILE_SIZE || '5242880', 10), // 5MB
+    maxLogFiles: parseInt(process.env.MAX_LOG_FILES || '5', 10),
   },
 };
 
@@ -51,7 +58,6 @@ export const config = {
 const requiredEnvVars = [
   'OPENAI_API_KEY',
   'PINECONE_API_KEY',
-  'PINECONE_ENVIRONMENT',
   'PINECONE_INDEX_NAME',
 ];
 
